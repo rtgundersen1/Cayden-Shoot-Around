@@ -11,6 +11,7 @@
       --card-hover: #182338;
       --accent: #f97316;
       --green: #22c55e;
+      --red: #ef4444;
       --text: #f8fafc;
       --muted: #94a3b8;
       --border: #1e293b;
@@ -35,6 +36,8 @@
     tr:hover { background: var(--card-hover); }
     .highlight { color: var(--accent); font-weight: 700; }
     .green { color: var(--green); font-weight: 700; }
+    .btn-del { background: transparent; border: 1px solid var(--red); color: var(--red); border-radius: 4px; padding: 2px 6px; font-size: 0.7rem; cursor: pointer; }
+    .btn-del:hover { background: var(--red); color: #fff; }
     .empty-state { padding: 30px; color: var(--muted); text-align: center; }
 
     .panels-grid { display: grid; grid-template-columns: 1fr; gap: 16px; margin-bottom: 24px; }
@@ -61,7 +64,10 @@
         <h1>Cayden's Shooting Lab</h1>
         <p style="color: var(--muted); font-size: 0.8rem; margin-top: 2px;">Workout Tracking • 3PT Spots (20 ea), FT (50), Mid-Range (25)</p>
       </div>
-      <span class="status-badge" id="sync-status">Connecting...</span>
+      <div style="display: flex; gap: 8px; align-items: center;">
+        <span class="status-badge" id="sync-status">Connecting...</span>
+        <button onclick="clearAllWorkouts()" style="background: none; border: 1px solid var(--border); color: var(--muted); font-size: 0.72rem; padding: 4px 8px; border-radius: 4px; cursor: pointer;">Wipe Local Cache</button>
+      </div>
     </header>
 
     <div class="stats-summary" id="stats-summary"></div>
@@ -79,6 +85,7 @@
             <th>Total 3PT (100)</th>
             <th>FT (50)</th>
             <th>Mid-Range (25)</th>
+            <th>Action</th>
           </tr>
         </thead>
         <tbody id="session-body"></tbody>
@@ -86,15 +93,13 @@
     </div>
 
     <div class="panels-grid">
-      <!-- Quick JSON Import -->
       <div class="panel-box">
         <div class="panel-title">📥 Quick Import Workout JSON</div>
-        <p style="color: var(--muted); font-size: 0.75rem; margin-bottom: 8px;">Paste a workout snippet from chat directly here to log and save:</p>
+        <p style="color: var(--muted); font-size: 0.75rem; margin-bottom: 8px;">Pasting an array [ { ... } ] replaces all data. Pasting a single { ... } adds a new workout:</p>
         <textarea id="import-json-box" class="json-input" placeholder='Paste workout JSON snippet here...'></textarea>
         <button class="submit-btn" onclick="importJsonWorkout()">Import Workout</button>
       </div>
 
-      <!-- Manual Log Form -->
       <div class="panel-box">
         <div class="panel-title">Log Workout Session</div>
         <form id="workout-form" onsubmit="handleFormSubmit(event)">
@@ -126,15 +131,23 @@
         const data = await res.json();
         if (Array.isArray(data)) {
           workouts = data;
+          localStorage.setItem('cayden_workouts', JSON.stringify(workouts));
+          setStatus("Synced with Drive");
+        } else {
+          fallbackLocal("Synced with Drive (Empty)");
         }
-        setStatus("Synced with Drive");
       } catch (err) {
-        console.warn("Using local session fallback.", err);
-        const local = localStorage.getItem('cayden_workouts');
-        if (local) workouts = JSON.parse(local);
-        setStatus("Offline Mode");
+        fallbackLocal("Offline Mode");
       }
       render();
+    }
+
+    function fallbackLocal(msg) {
+      const local = localStorage.getItem('cayden_workouts');
+      if (local) {
+        try { workouts = JSON.parse(local); } catch(e){}
+      }
+      setStatus(msg);
     }
 
     async function saveWorkouts() {
@@ -149,7 +162,6 @@
         });
         setStatus("All changes saved to Drive");
       } catch (err) {
-        console.error(err);
         setStatus("Error saving to Drive");
       }
     }
@@ -158,19 +170,36 @@
       document.getElementById('sync-status').textContent = msg;
     }
 
+    function deleteWorkout(index) {
+      if (confirm("Delete this workout entry?")) {
+        workouts.splice(index, 1);
+        render();
+        saveWorkouts();
+      }
+    }
+
+    function clearAllWorkouts() {
+      if (confirm("Clear all workouts from local memory and reset?")) {
+        workouts = [];
+        localStorage.removeItem('cayden_workouts');
+        render();
+        saveWorkouts();
+      }
+    }
+
     function render() {
       const tbody = document.getElementById('session-body');
       tbody.innerHTML = '';
 
       if (workouts.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="9" class="empty-state">No shooting workouts recorded yet.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="10" class="empty-state">No shooting workouts recorded yet.</td></tr>`;
         document.getElementById('stats-summary').innerHTML = '';
         return;
       }
 
       let totals = { s1: 0, s2: 0, s3: 0, s4: 0, s5: 0, total3: 0, ft: 0, mid: 0, count: workouts.length };
 
-      workouts.forEach(w => {
+      workouts.forEach((w, idx) => {
         const s1 = Number(w.s1) || 0;
         const s2 = Number(w.s2) || 0;
         const s3 = Number(w.s3) || 0;
@@ -200,6 +229,7 @@
           <td class="highlight">${total3}/100 (${total3}%)</td>
           <td class="green">${ft}/50 (${((ft/50)*100).toFixed(0)}%)</td>
           <td>${mid}/25 (${((mid/25)*100).toFixed(0)}%)</td>
+          <td><button class="btn-del" onclick="deleteWorkout(${idx})">✕ Delete</button></td>
         `;
         tbody.appendChild(tr);
       });
@@ -246,12 +276,15 @@
       if (!raw) return;
       try {
         const parsed = JSON.parse(raw);
-        const list = Array.isArray(parsed) ? parsed : [parsed];
-        list.forEach(w => workouts.unshift(w));
+        if (Array.isArray(parsed)) {
+          workouts = parsed; // Overwrite full list when an array is passed
+        } else {
+          workouts.unshift(parsed); // Prepend single workout
+        }
         render();
         saveWorkouts();
         document.getElementById('import-json-box').value = '';
-        alert("Workout successfully imported and synced to Drive!");
+        alert("Workout list updated!");
       } catch (err) {
         alert("Invalid JSON format.");
       }
