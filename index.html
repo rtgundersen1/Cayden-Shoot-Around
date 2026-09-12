@@ -19,18 +19,18 @@
     }
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
     body { background: var(--bg); color: var(--text); padding: 16px; }
-    .container { max-width: 1250px; margin: 0 auto; }
+    .container { max-width: 1350px; margin: 0 auto; }
     header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 10px; }
     h1 { font-size: 1.5rem; font-weight: 800; letter-spacing: -0.5px; }
     .status-badge { font-size: 0.75rem; padding: 4px 10px; border-radius: 6px; background: var(--card); border: 1px solid var(--border); color: var(--muted); }
 
-    .stats-summary { display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: 8px; margin-bottom: 18px; }
+    .stats-summary { display: grid; grid-template-columns: repeat(auto-fit, minmax(105px, 1fr)); gap: 8px; margin-bottom: 18px; }
     .stat-card { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 10px 6px; text-align: center; }
-    .stat-card .val { font-size: 1.25rem; font-weight: 700; color: #fff; margin-top: 2px; }
+    .stat-card .val { font-size: 1.2rem; font-weight: 700; color: #fff; margin-top: 2px; }
     .stat-card .label { font-size: 0.65rem; color: var(--muted); text-transform: uppercase; font-weight: 600; letter-spacing: 0.05em; }
 
     .table-box { background: var(--card); border: 1px solid var(--border); border-radius: 8px; overflow-x: auto; margin-bottom: 24px; }
-    table { width: 100%; border-collapse: collapse; text-align: center; font-size: 0.8rem; white-space: nowrap; }
+    table { width: 100%; border-collapse: collapse; text-align: center; font-size: 0.78rem; white-space: nowrap; }
     th { background: var(--header-bg); color: var(--muted); padding: 10px 8px; font-weight: 600; border-bottom: 1px solid var(--border); }
     td { padding: 8px; border-bottom: 1px solid var(--border); }
     tr:hover { background: var(--card-hover); }
@@ -43,7 +43,7 @@
     .panels-grid { display: grid; grid-template-columns: 1fr; gap: 16px; margin-bottom: 24px; }
     .panel-box { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 16px; }
     .panel-title { font-size: 0.95rem; font-weight: 700; margin-bottom: 10px; color: var(--text); }
-    .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 10px; }
+    .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(115px, 1fr)); gap: 10px; }
     .form-group label { display: block; font-size: 0.65rem; color: var(--muted); margin-bottom: 3px; text-transform: uppercase; font-weight: 600; }
     .form-group input {
       width: 100%; background: #0f172a; border: 1px solid var(--border); color: #fff; padding: 7px 8px; border-radius: 4px; font-size: 0.82rem; outline: none;
@@ -62,7 +62,7 @@
     <header>
       <div>
         <h1>Cayden's Shooting Lab</h1>
-        <p style="color: var(--muted); font-size: 0.8rem; margin-top: 2px;">Workout Tracking • 3PT Spots (20 ea), FT (50), Mid-Range (25)</p>
+        <p style="color: var(--muted); font-size: 0.8rem; margin-top: 2px;">Workout Tracking • 3PT Spots (20 ea), FT (50), Mid L & R (25 ea)</p>
       </div>
       <div style="display: flex; gap: 8px; align-items: center;">
         <span class="status-badge" id="sync-status">Connecting...</span>
@@ -84,7 +84,9 @@
             <th>Corner R (20)</th>
             <th>Total 3PT (100)</th>
             <th>FT (50)</th>
-            <th>Mid-Range (25)</th>
+            <th>Mid L (25)</th>
+            <th>Mid R (25)</th>
+            <th>Total Mid (50)</th>
             <th>Action</th>
           </tr>
         </thead>
@@ -93,6 +95,7 @@
     </div>
 
     <div class="panels-grid">
+      <!-- Quick JSON Import -->
       <div class="panel-box">
         <div class="panel-title">📥 Quick Import Workout JSON</div>
         <p style="color: var(--muted); font-size: 0.75rem; margin-bottom: 8px;">Pasting an array [ { ... } ] replaces all data. Pasting a single { ... } adds a new workout:</p>
@@ -100,18 +103,20 @@
         <button class="submit-btn" onclick="importJsonWorkout()">Import Workout</button>
       </div>
 
+      <!-- Manual Log Form -->
       <div class="panel-box">
         <div class="panel-title">Log Workout Session</div>
         <form id="workout-form" onsubmit="handleFormSubmit(event)">
           <div class="form-grid">
             <div class="form-group"><label>Date</label><input type="date" id="w-date" required /></div>
-            <div class="form-group"><label>3PT Spot 1 (Corner L /20)</label><input type="number" min="0" max="20" id="w-s1" placeholder="Made out of 20" required /></div>
-            <div class="form-group"><label>3PT Spot 2 (Wing L /20)</label><input type="number" min="0" max="20" id="w-s2" placeholder="Made out of 20" required /></div>
-            <div class="form-group"><label>3PT Spot 3 (Top /20)</label><input type="number" min="0" max="20" id="w-s3" placeholder="Made out of 20" required /></div>
-            <div class="form-group"><label>3PT Spot 4 (Wing R /20)</label><input type="number" min="0" max="20" id="w-s4" placeholder="Made out of 20" required /></div>
-            <div class="form-group"><label>3PT Spot 5 (Corner R /20)</label><input type="number" min="0" max="20" id="w-s5" placeholder="Made out of 20" required /></div>
-            <div class="form-group"><label>Free Throws (/50)</label><input type="number" min="0" max="50" id="w-ft" placeholder="Made out of 50" required /></div>
-            <div class="form-group"><label>Mid-Range (/25)</label><input type="number" min="0" max="25" id="w-mid" placeholder="Made out of 25" required /></div>
+            <div class="form-group"><label>3PT Spot 1 (Corner L /20)</label><input type="number" min="0" max="20" id="w-s1" placeholder="Made /20" required /></div>
+            <div class="form-group"><label>3PT Spot 2 (Wing L /20)</label><input type="number" min="0" max="20" id="w-s2" placeholder="Made /20" required /></div>
+            <div class="form-group"><label>3PT Spot 3 (Top /20)</label><input type="number" min="0" max="20" id="w-s3" placeholder="Made /20" required /></div>
+            <div class="form-group"><label>3PT Spot 4 (Wing R /20)</label><input type="number" min="0" max="20" id="w-s4" placeholder="Made /20" required /></div>
+            <div class="form-group"><label>3PT Spot 5 (Corner R /20)</label><input type="number" min="0" max="20" id="w-s5" placeholder="Made /20" required /></div>
+            <div class="form-group"><label>Free Throws (/50)</label><input type="number" min="0" max="50" id="w-ft" placeholder="Made /50" required /></div>
+            <div class="form-group"><label>Mid L - 1 (/25)</label><input type="number" min="0" max="25" id="w-mid1" placeholder="Made /25" required /></div>
+            <div class="form-group"><label>Mid R - 2 (/25)</label><input type="number" min="0" max="25" id="w-mid2" placeholder="Made /25" required /></div>
           </div>
           <button type="submit" class="submit-btn">Save Workout & Sync to Drive</button>
         </form>
@@ -192,12 +197,12 @@
       tbody.innerHTML = '';
 
       if (workouts.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="10" class="empty-state">No shooting workouts recorded yet.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="11" class="empty-state">No shooting workouts recorded yet.</td></tr>`;
         document.getElementById('stats-summary').innerHTML = '';
         return;
       }
 
-      let totals = { s1: 0, s2: 0, s3: 0, s4: 0, s5: 0, total3: 0, ft: 0, mid: 0, count: workouts.length };
+      let totals = { s1: 0, s2: 0, s3: 0, s4: 0, s5: 0, total3: 0, ft: 0, mid1: 0, mid2: 0, totalMid: 0, count: workouts.length };
 
       workouts.forEach((w, idx) => {
         const s1 = Number(w.s1) || 0;
@@ -207,7 +212,11 @@
         const s5 = Number(w.s5) || 0;
         const total3 = s1 + s2 + s3 + s4 + s5;
         const ft = Number(w.ft) || 0;
-        const mid = Number(w.mid) || 0;
+        
+        // Handle backwards compatibility if earlier entries used a single "mid"
+        const mid1 = Number(w.mid1 !== undefined ? w.mid1 : (w.mid || 0));
+        const mid2 = Number(w.mid2 !== undefined ? w.mid2 : 0);
+        const totalMid = mid1 + mid2;
 
         totals.s1 += s1;
         totals.s2 += s2;
@@ -216,7 +225,9 @@
         totals.s5 += s5;
         totals.total3 += total3;
         totals.ft += ft;
-        totals.mid += mid;
+        totals.mid1 += mid1;
+        totals.mid2 += mid2;
+        totals.totalMid += totalMid;
 
         const tr = document.createElement('tr');
         tr.innerHTML = `
@@ -228,7 +239,9 @@
           <td>${s5}/20 (${((s5/20)*100).toFixed(0)}%)</td>
           <td class="highlight">${total3}/100 (${total3}%)</td>
           <td class="green">${ft}/50 (${((ft/50)*100).toFixed(0)}%)</td>
-          <td>${mid}/25 (${((mid/25)*100).toFixed(0)}%)</td>
+          <td>${mid1}/25 (${((mid1/25)*100).toFixed(0)}%)</td>
+          <td>${mid2}/25 (${((mid2/25)*100).toFixed(0)}%)</td>
+          <td style="font-weight:600;">${totalMid}/50 (${((totalMid/50)*100).toFixed(0)}%)</td>
           <td><button class="btn-del" onclick="deleteWorkout(${idx})">✕ Delete</button></td>
         `;
         tbody.appendChild(tr);
@@ -237,7 +250,9 @@
       const n = totals.count;
       const avgTotal3Pct = ((totals.total3 / (n * 100)) * 100).toFixed(1) + '%';
       const avgFtPct = ((totals.ft / (n * 50)) * 100).toFixed(1) + '%';
-      const avgMidPct = ((totals.mid / (n * 25)) * 100).toFixed(1) + '%';
+      const avgMid1Pct = ((totals.mid1 / (n * 25)) * 100).toFixed(1) + '%';
+      const avgMid2Pct = ((totals.mid2 / (n * 25)) * 100).toFixed(1) + '%';
+      const avgTotalMidPct = ((totals.totalMid / (n * 50)) * 100).toFixed(1) + '%';
 
       document.getElementById('stats-summary').innerHTML = `
         <div class="stat-card"><div class="label">Sessions</div><div class="val">${n}</div></div>
@@ -248,7 +263,9 @@
         <div class="stat-card"><div class="label">Wing R%</div><div class="val">${((totals.s4/(n*20))*100).toFixed(1)}%</div></div>
         <div class="stat-card"><div class="label">Corner R%</div><div class="val">${((totals.s5/(n*20))*100).toFixed(1)}%</div></div>
         <div class="stat-card"><div class="label">FT% (/50)</div><div class="val" style="color:var(--green)">${avgFtPct}</div></div>
-        <div class="stat-card"><div class="label">Mid-Range%</div><div class="val">${avgMidPct}</div></div>
+        <div class="stat-card"><div class="label">Mid L-1%</div><div class="val">${avgMid1Pct}</div></div>
+        <div class="stat-card"><div class="label">Mid R-2%</div><div class="val">${avgMid2Pct}</div></div>
+        <div class="stat-card"><div class="label">Total Mid%</div><div class="val">${avgTotalMidPct}</div></div>
       `;
     }
 
@@ -262,7 +279,8 @@
         s4: Number(document.getElementById('w-s4').value) || 0,
         s5: Number(document.getElementById('w-s5').value) || 0,
         ft: Number(document.getElementById('w-ft').value) || 0,
-        mid: Number(document.getElementById('w-mid').value) || 0
+        mid1: Number(document.getElementById('w-mid1').value) || 0,
+        mid2: Number(document.getElementById('w-mid2').value) || 0
       };
 
       workouts.unshift(newWorkout);
@@ -277,9 +295,9 @@
       try {
         const parsed = JSON.parse(raw);
         if (Array.isArray(parsed)) {
-          workouts = parsed; // Overwrite full list when an array is passed
+          workouts = parsed;
         } else {
-          workouts.unshift(parsed); // Prepend single workout
+          workouts.unshift(parsed);
         }
         render();
         saveWorkouts();
