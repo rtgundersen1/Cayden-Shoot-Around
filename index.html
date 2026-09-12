@@ -1,60 +1,94 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Cayden's Shooting Lab</title>
   <style>
+    /* Wolcott Light Theme */
     :root {
-      --bg: #090d16;
-      --card: #131c2e;
-      --card-hover: #182338;
-      --accent: #f97316;
+      --bg: #f8fafc;
+      --card: #ffffff;
+      --card-hover: #fef2f2;
+      --accent: #dc2626;
+      --accent-hover: #b91c1c;
+      --green: #16a34a;
+      --red: #dc2626;
+      --blue: #0284c7;
+      --text: #0f172a;
+      --muted: #64748b;
+      --border: #e2e8f0;
+      --header-bg: #fee2e2;
+      --header-text: #991b1b;
+      --input-bg: #f8fafc;
+      --shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    }
+
+    /* Wolcott Dark Theme */
+    [data-theme="dark"] {
+      --bg: #0b0f19;
+      --card: #131b2e;
+      --card-hover: #1c263e;
+      --accent: #ef4444;
+      --accent-hover: #dc2626;
       --green: #22c55e;
       --red: #ef4444;
+      --blue: #38bdf8;
       --text: #f8fafc;
       --muted: #94a3b8;
-      --border: #1e293b;
-      --header-bg: #0f172a;
+      --border: #22304d;
+      --header-bg: #26171f;
+      --header-text: #fca5a5;
+      --input-bg: #090e18;
+      --shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
     }
+
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-    body { background: var(--bg); color: var(--text); padding: 16px; }
-    .container { max-width: 1350px; margin: 0 auto; }
+    body { background: var(--bg); color: var(--text); padding: 16px; transition: background 0.2s, color 0.2s; }
+    .container { max-width: 1400px; margin: 0 auto; }
     header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 10px; }
-    h1 { font-size: 1.5rem; font-weight: 800; letter-spacing: -0.5px; }
-    .status-badge { font-size: 0.75rem; padding: 4px 10px; border-radius: 6px; background: var(--card); border: 1px solid var(--border); color: var(--muted); }
+    h1 { font-size: 1.5rem; font-weight: 800; letter-spacing: -0.5px; color: var(--accent); }
+    .header-actions { display: flex; gap: 8px; align-items: center; }
+    .status-badge { font-size: 0.75rem; padding: 5px 12px; border-radius: 6px; background: var(--card); border: 1px solid var(--border); color: var(--muted); font-weight: 600; box-shadow: var(--shadow); }
+
+    .btn-tool {
+      background: var(--card); border: 1px solid var(--border); color: var(--text); padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 0.78rem; font-weight: 700; transition: all 0.15s ease; box-shadow: var(--shadow);
+    }
+    .btn-tool:hover { border-color: var(--accent); color: var(--accent); }
 
     .stats-summary { display: grid; grid-template-columns: repeat(auto-fit, minmax(105px, 1fr)); gap: 8px; margin-bottom: 18px; }
-    .stat-card { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 10px 6px; text-align: center; }
-    .stat-card .val { font-size: 1.2rem; font-weight: 700; color: #fff; margin-top: 2px; }
-    .stat-card .label { font-size: 0.65rem; color: var(--muted); text-transform: uppercase; font-weight: 600; letter-spacing: 0.05em; }
+    .stat-card { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 10px 6px; text-align: center; box-shadow: var(--shadow); }
+    .stat-card .val { font-size: 1.2rem; font-weight: 800; color: var(--text); margin-top: 2px; }
+    .stat-card .label { font-size: 0.65rem; color: var(--muted); text-transform: uppercase; font-weight: 700; letter-spacing: 0.05em; }
 
-    .table-box { background: var(--card); border: 1px solid var(--border); border-radius: 8px; overflow-x: auto; margin-bottom: 24px; }
+    .table-box { background: var(--card); border: 1px solid var(--border); border-radius: 8px; overflow-x: auto; margin-bottom: 24px; box-shadow: var(--shadow); }
     table { width: 100%; border-collapse: collapse; text-align: center; font-size: 0.78rem; white-space: nowrap; }
-    th { background: var(--header-bg); color: var(--muted); padding: 10px 8px; font-weight: 600; border-bottom: 1px solid var(--border); }
-    td { padding: 8px; border-bottom: 1px solid var(--border); }
+    th { background: var(--header-bg); color: var(--header-text); padding: 10px 8px; font-weight: 700; border-bottom: 1px solid var(--border); }
+    td { padding: 9px 8px; border-bottom: 1px solid var(--border); color: var(--text); }
     tr:hover { background: var(--card-hover); }
-    .highlight { color: var(--accent); font-weight: 700; }
-    .green { color: var(--green); font-weight: 700; }
-    .btn-del { background: transparent; border: 1px solid var(--red); color: var(--red); border-radius: 4px; padding: 2px 6px; font-size: 0.7rem; cursor: pointer; }
+    .highlight { color: var(--accent); font-weight: 800; }
+    .green { color: var(--green); font-weight: 800; }
+    .btn-del { background: var(--card); border: 1px solid var(--red); color: var(--red); border-radius: 4px; padding: 3px 8px; font-size: 0.7rem; cursor: pointer; font-weight: 600; }
     .btn-del:hover { background: var(--red); color: #fff; }
-    .empty-state { padding: 30px; color: var(--muted); text-align: center; }
+    .empty-state { padding: 32px; color: var(--muted); text-align: center; font-weight: 500; }
 
     .panels-grid { display: grid; grid-template-columns: 1fr; gap: 16px; margin-bottom: 24px; }
-    .panel-box { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 16px; }
-    .panel-title { font-size: 0.95rem; font-weight: 700; margin-bottom: 10px; color: var(--text); }
+    .panel-box { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 18px; box-shadow: var(--shadow); }
+    .panel-title { font-size: 0.95rem; font-weight: 800; margin-bottom: 10px; color: var(--text); }
     .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(115px, 1fr)); gap: 10px; }
-    .form-group label { display: block; font-size: 0.65rem; color: var(--muted); margin-bottom: 3px; text-transform: uppercase; font-weight: 600; }
+    .form-group label { display: block; font-size: 0.65rem; color: var(--muted); margin-bottom: 4px; text-transform: uppercase; font-weight: 700; }
     .form-group input {
-      width: 100%; background: #0f172a; border: 1px solid var(--border); color: #fff; padding: 7px 8px; border-radius: 4px; font-size: 0.82rem; outline: none;
+      width: 100%; background: var(--input-bg); border: 1px solid var(--border); color: var(--text); padding: 7px 8px; border-radius: 5px; font-size: 0.82rem; outline: none; transition: border-color 0.15s;
     }
+    .form-group input:focus { border-color: var(--accent); }
     .submit-btn {
-      margin-top: 14px; background: var(--accent); border: none; color: #fff; padding: 9px 20px; border-radius: 6px; font-weight: 700; cursor: pointer; transition: opacity 0.2s;
+      margin-top: 14px; background: var(--accent); border: none; color: #fff; padding: 9px 22px; border-radius: 6px; font-weight: 700; cursor: pointer; transition: background 0.15s;
     }
-    .submit-btn:hover { opacity: 0.9; }
+    .submit-btn:hover { background: var(--accent-hover); }
     textarea.json-input {
-      width: 100%; height: 80px; background: #0f172a; border: 1px solid var(--border); color: #38bdf8; font-family: monospace; font-size: 0.78rem; padding: 8px; border-radius: 6px; outline: none;
+      width: 100%; height: 80px; background: var(--input-bg); border: 1px solid var(--border); color: var(--blue); font-family: monospace; font-size: 0.78rem; padding: 8px; border-radius: 6px; outline: none;
     }
+    textarea.json-input:focus { border-color: var(--accent); }
   </style>
 </head>
 <body>
@@ -62,11 +96,12 @@
     <header>
       <div>
         <h1>Cayden's Shooting Lab</h1>
-        <p style="color: var(--muted); font-size: 0.8rem; margin-top: 2px;">Workout Tracking • 3PT Spots (20 ea), FT (50), Mid L & R (25 ea)</p>
+        <p style="color: var(--muted); font-size: 0.8rem; margin-top: 2px;">Wolcott High • Practice Tracking • 3PT Spots (20 ea), FT (50), Mid L & R (25 ea)</p>
       </div>
-      <div style="display: flex; gap: 8px; align-items: center;">
+      <div class="header-actions">
+        <button class="btn-tool" onclick="toggleTheme()" id="theme-btn">🌓 Dark Mode</button>
         <span class="status-badge" id="sync-status">Connecting...</span>
-        <button onclick="clearAllWorkouts()" style="background: none; border: 1px solid var(--border); color: var(--muted); font-size: 0.72rem; padding: 4px 8px; border-radius: 4px; cursor: pointer;">Wipe Local Cache</button>
+        <button onclick="clearAllWorkouts()" class="btn-tool" style="color: var(--muted);">Wipe Local Cache</button>
       </div>
     </header>
 
@@ -128,6 +163,26 @@
     const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyohR3lHHzpfkSIKLiKb7WFGHT0HiTHHcXkyyK-vwPOXnYygjVuqI4Zqnl4rWIc_yTfWQ/exec";
 
     let workouts = [];
+
+    // Theme Management
+    function initTheme() {
+      const savedTheme = localStorage.getItem('shooting_lab_theme') || 'light';
+      document.documentElement.setAttribute('data-theme', savedTheme);
+      updateThemeButton(savedTheme);
+    }
+
+    function toggleTheme() {
+      const current = document.documentElement.getAttribute('data-theme');
+      const next = current === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', next);
+      localStorage.setItem('shooting_lab_theme', next);
+      updateThemeButton(next);
+    }
+
+    function updateThemeButton(theme) {
+      const btn = document.getElementById('theme-btn');
+      btn.textContent = theme === 'dark' ? '☀️ Light Mode' : '🌙 Dark Mode';
+    }
 
     async function loadWorkouts() {
       setStatus("Syncing from Drive...");
@@ -213,7 +268,6 @@
         const total3 = s1 + s2 + s3 + s4 + s5;
         const ft = Number(w.ft) || 0;
         
-        // Handle backwards compatibility if earlier entries used a single "mid"
         const mid1 = Number(w.mid1 !== undefined ? w.mid1 : (w.mid || 0));
         const mid2 = Number(w.mid2 !== undefined ? w.mid2 : 0);
         const totalMid = mid1 + mid2;
@@ -241,7 +295,7 @@
           <td class="green">${ft}/50 (${((ft/50)*100).toFixed(0)}%)</td>
           <td>${mid1}/25 (${((mid1/25)*100).toFixed(0)}%)</td>
           <td>${mid2}/25 (${((mid2/25)*100).toFixed(0)}%)</td>
-          <td style="font-weight:600;">${totalMid}/50 (${((totalMid/50)*100).toFixed(0)}%)</td>
+          <td style="font-weight:700;">${totalMid}/50 (${((totalMid/50)*100).toFixed(0)}%)</td>
           <td><button class="btn-del" onclick="deleteWorkout(${idx})">✕ Delete</button></td>
         `;
         tbody.appendChild(tr);
@@ -308,6 +362,7 @@
       }
     }
 
+    initTheme();
     loadWorkouts();
   </script>
 </body>
