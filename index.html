@@ -1,94 +1,63 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="light">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Cayden's Shooting Lab</title>
   <style>
-    /* Wolcott Light Theme */
     :root {
-      --bg: #f8fafc;
-      --card: #ffffff;
-      --card-hover: #fef2f2;
-      --accent: #dc2626;
-      --accent-hover: #b91c1c;
-      --green: #16a34a;
-      --red: #dc2626;
-      --blue: #0284c7;
-      --text: #0f172a;
-      --muted: #64748b;
-      --border: #e2e8f0;
-      --header-bg: #fee2e2;
-      --header-text: #991b1b;
-      --input-bg: #f8fafc;
-      --shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-    }
-
-    /* Wolcott Dark Theme */
-    [data-theme="dark"] {
-      --bg: #0b0f19;
-      --card: #131b2e;
-      --card-hover: #1c263e;
-      --accent: #ef4444;
-      --accent-hover: #dc2626;
+      --bg: #090d16;
+      --card: #131c2e;
+      --card-hover: #182338;
+      --accent: #f97316;
       --green: #22c55e;
       --red: #ef4444;
       --blue: #38bdf8;
       --text: #f8fafc;
       --muted: #94a3b8;
-      --border: #22304d;
-      --header-bg: #26171f;
-      --header-text: #fca5a5;
-      --input-bg: #090e18;
-      --shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+      --border: #1e293b;
+      --header-bg: #0f172a;
     }
-
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-    body { background: var(--bg); color: var(--text); padding: 16px; transition: background 0.2s, color 0.2s; }
+    body { background: var(--bg); color: var(--text); padding: 16px; }
     .container { max-width: 1400px; margin: 0 auto; }
     header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 10px; }
-    h1 { font-size: 1.5rem; font-weight: 800; letter-spacing: -0.5px; color: var(--accent); }
-    .header-actions { display: flex; gap: 8px; align-items: center; }
-    .status-badge { font-size: 0.75rem; padding: 5px 12px; border-radius: 6px; background: var(--card); border: 1px solid var(--border); color: var(--muted); font-weight: 600; box-shadow: var(--shadow); }
+    h1 { font-size: 1.5rem; font-weight: 800; letter-spacing: -0.5px; }
+    .status-badge { font-size: 0.75rem; padding: 4px 10px; border-radius: 6px; background: var(--card); border: 1px solid var(--border); color: var(--muted); }
 
-    .btn-tool {
-      background: var(--card); border: 1px solid var(--border); color: var(--text); padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 0.78rem; font-weight: 700; transition: all 0.15s ease; box-shadow: var(--shadow);
-    }
-    .btn-tool:hover { border-color: var(--accent); color: var(--accent); }
+    .stats-summary { display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: 8px; margin-bottom: 18px; }
+    .stat-card { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 10px 6px; text-align: center; }
+    .stat-card .val { font-size: 1.25rem; font-weight: 700; color: #fff; margin-top: 2px; }
+    .stat-card .label { font-size: 0.65rem; color: var(--muted); text-transform: uppercase; font-weight: 600; letter-spacing: 0.05em; }
 
-    .stats-summary { display: grid; grid-template-columns: repeat(auto-fit, minmax(105px, 1fr)); gap: 8px; margin-bottom: 18px; }
-    .stat-card { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 10px 6px; text-align: center; box-shadow: var(--shadow); }
-    .stat-card .val { font-size: 1.2rem; font-weight: 800; color: var(--text); margin-top: 2px; }
-    .stat-card .label { font-size: 0.65rem; color: var(--muted); text-transform: uppercase; font-weight: 700; letter-spacing: 0.05em; }
-
-    .table-box { background: var(--card); border: 1px solid var(--border); border-radius: 8px; overflow-x: auto; margin-bottom: 24px; box-shadow: var(--shadow); }
+    .table-box { background: var(--card); border: 1px solid var(--border); border-radius: 8px; overflow-x: auto; margin-bottom: 24px; }
     table { width: 100%; border-collapse: collapse; text-align: center; font-size: 0.78rem; white-space: nowrap; }
-    th { background: var(--header-bg); color: var(--header-text); padding: 10px 8px; font-weight: 700; border-bottom: 1px solid var(--border); }
-    td { padding: 9px 8px; border-bottom: 1px solid var(--border); color: var(--text); }
+    th { background: var(--header-bg); color: var(--muted); padding: 10px 8px; font-weight: 600; border-bottom: 1px solid var(--border); }
+    td { padding: 8px; border-bottom: 1px solid var(--border); }
     tr:hover { background: var(--card-hover); }
-    .highlight { color: var(--accent); font-weight: 800; }
-    .green { color: var(--green); font-weight: 800; }
-    .btn-del { background: var(--card); border: 1px solid var(--red); color: var(--red); border-radius: 4px; padding: 3px 8px; font-size: 0.7rem; cursor: pointer; font-weight: 600; }
+    .pts-highlight { color: #facc15; font-weight: 800; font-size: 0.9rem; }
+    .highlight { color: var(--accent); font-weight: 700; }
+    .green { color: var(--green); font-weight: 700; }
+    .btn-del { background: transparent; border: 1px solid var(--red); color: var(--red); border-radius: 4px; padding: 2px 6px; font-size: 0.7rem; cursor: pointer; }
     .btn-del:hover { background: var(--red); color: #fff; }
-    .empty-state { padding: 32px; color: var(--muted); text-align: center; font-weight: 500; }
+    .empty-state { padding: 30px; color: var(--muted); text-align: center; }
 
     .panels-grid { display: grid; grid-template-columns: 1fr; gap: 16px; margin-bottom: 24px; }
-    .panel-box { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 18px; box-shadow: var(--shadow); }
-    .panel-title { font-size: 0.95rem; font-weight: 800; margin-bottom: 10px; color: var(--text); }
-    .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(115px, 1fr)); gap: 10px; }
-    .form-group label { display: block; font-size: 0.65rem; color: var(--muted); margin-bottom: 4px; text-transform: uppercase; font-weight: 700; }
+    .panel-box { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 16px; }
+    .panel-title { font-size: 0.95rem; font-weight: 700; margin-bottom: 10px; color: var(--text); }
+    .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: 10px; }
+    .form-group label { display: block; font-size: 0.65rem; color: var(--muted); margin-bottom: 3px; text-transform: uppercase; font-weight: 600; }
     .form-group input {
-      width: 100%; background: var(--input-bg); border: 1px solid var(--border); color: var(--text); padding: 7px 8px; border-radius: 5px; font-size: 0.82rem; outline: none; transition: border-color 0.15s;
+      width: 100%; background: #0f172a; border: 1px solid var(--border); color: #fff; padding: 7px 8px; border-radius: 4px; font-size: 0.82rem; outline: none;
     }
-    .form-group input:focus { border-color: var(--accent); }
     .submit-btn {
-      margin-top: 14px; background: var(--accent); border: none; color: #fff; padding: 9px 22px; border-radius: 6px; font-weight: 700; cursor: pointer; transition: background 0.15s;
+      margin-top: 14px; background: var(--accent); border: none; color: #fff; padding: 9px 20px; border-radius: 6px; font-weight: 700; cursor: pointer; transition: opacity 0.2s;
     }
-    .submit-btn:hover { background: var(--accent-hover); }
-    textarea.json-input {
-      width: 100%; height: 80px; background: var(--input-bg); border: 1px solid var(--border); color: var(--blue); font-family: monospace; font-size: 0.78rem; padding: 8px; border-radius: 6px; outline: none;
+    .submit-btn:hover { opacity: 0.9; }
+    .tool-btn {
+      background: #0f172a; border: 1px solid var(--border); color: var(--muted); padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 0.75rem; font-weight: 600;
     }
-    textarea.json-input:focus { border-color: var(--accent); }
+    .tool-btn.danger:hover { color: var(--red); border-color: var(--red); }
   </style>
 </head>
 <body>
@@ -96,64 +65,58 @@
     <header>
       <div>
         <h1>Cayden's Shooting Lab</h1>
-        <p style="color: var(--muted); font-size: 0.8rem; margin-top: 2px;">Wolcott High • Practice Tracking • 3PT Spots (20 ea), FT (50), Mid L & R (25 ea)</p>
+        <p style="color: var(--muted); font-size: 0.8rem; margin-top: 2px;">Spot Shooting, Free Throws & Shoot-Around Scoring Game</p>
       </div>
-      <div class="header-actions">
-        <button class="btn-tool" onclick="toggleTheme()" id="theme-btn">🌓 Dark Mode</button>
+      <div style="display: flex; gap: 8px; align-items: center;">
         <span class="status-badge" id="sync-status">Connecting...</span>
-        <button onclick="clearAllWorkouts()" class="btn-tool" style="color: var(--muted);">Wipe Local Cache</button>
+        <button onclick="clearAllCache()" class="tool-btn danger">Wipe Cache</button>
       </div>
     </header>
 
+    <!-- Top Summary Row -->
     <div class="stats-summary" id="stats-summary"></div>
 
+    <!-- Shoot Around Sessions Table -->
     <div class="table-box">
       <table>
         <thead>
           <tr>
             <th>Date</th>
-            <th>Corner L (20)</th>
-            <th>Wing L (20)</th>
-            <th>Top (20)</th>
-            <th>Wing R (20)</th>
-            <th>Corner R (20)</th>
-            <th>Total 3PT (100)</th>
-            <th>FT (50)</th>
-            <th>Mid L (25)</th>
-            <th>Mid R (25)</th>
-            <th>Total Mid (50)</th>
+            <th>Corner L (3PT)</th>
+            <th>Wing L (3PT)</th>
+            <th>Top (3PT)</th>
+            <th>Wing R (3PT)</th>
+            <th>Corner R (3PT)</th>
+            <th>Total 3PT</th>
+            <th>Mid L (2PT)</th>
+            <th>Mid R (2PT)</th>
+            <th>Total Mid</th>
+            <th>FT (/50)</th>
+            <th style="color:#facc15;">Total Points</th>
             <th>Action</th>
           </tr>
         </thead>
-        <tbody id="session-body"></tbody>
+        <tbody id="sessions-body"></tbody>
       </table>
     </div>
 
+    <!-- Log Session Panel -->
     <div class="panels-grid">
-      <!-- Quick JSON Import -->
       <div class="panel-box">
-        <div class="panel-title">📥 Quick Import Workout JSON</div>
-        <p style="color: var(--muted); font-size: 0.75rem; margin-bottom: 8px;">Pasting an array [ { ... } ] replaces all data. Pasting a single { ... } adds a new workout:</p>
-        <textarea id="import-json-box" class="json-input" placeholder='Paste workout JSON snippet here...'></textarea>
-        <button class="submit-btn" onclick="importJsonWorkout()">Import Workout</button>
-      </div>
-
-      <!-- Manual Log Form -->
-      <div class="panel-box">
-        <div class="panel-title">Log Workout Session</div>
-        <form id="workout-form" onsubmit="handleFormSubmit(event)">
+        <div class="panel-title">Log New Shoot Around Session</div>
+        <form id="session-form" onsubmit="handleFormSubmit(event)">
           <div class="form-grid">
-            <div class="form-group"><label>Date</label><input type="date" id="w-date" required /></div>
-            <div class="form-group"><label>3PT Spot 1 (Corner L /20)</label><input type="number" min="0" max="20" id="w-s1" placeholder="Made /20" required /></div>
-            <div class="form-group"><label>3PT Spot 2 (Wing L /20)</label><input type="number" min="0" max="20" id="w-s2" placeholder="Made /20" required /></div>
-            <div class="form-group"><label>3PT Spot 3 (Top /20)</label><input type="number" min="0" max="20" id="w-s3" placeholder="Made /20" required /></div>
-            <div class="form-group"><label>3PT Spot 4 (Wing R /20)</label><input type="number" min="0" max="20" id="w-s4" placeholder="Made /20" required /></div>
-            <div class="form-group"><label>3PT Spot 5 (Corner R /20)</label><input type="number" min="0" max="20" id="w-s5" placeholder="Made /20" required /></div>
-            <div class="form-group"><label>Free Throws (/50)</label><input type="number" min="0" max="50" id="w-ft" placeholder="Made /50" required /></div>
-            <div class="form-group"><label>Mid L - 1 (/25)</label><input type="number" min="0" max="25" id="w-mid1" placeholder="Made /25" required /></div>
-            <div class="form-group"><label>Mid R - 2 (/25)</label><input type="number" min="0" max="25" id="w-mid2" placeholder="Made /25" required /></div>
+            <div class="form-group"><label>Date</label><input type="date" id="s-date" required /></div>
+            <div class="form-group"><label>Corner L (Made /20)</label><input type="number" id="s-c-left" min="0" max="20" placeholder="0" /></div>
+            <div class="form-group"><label>Wing L (Made /20)</label><input type="number" id="s-w-left" min="0" max="20" placeholder="0" /></div>
+            <div class="form-group"><label>Top (Made /20)</label><input type="number" id="s-top" min="0" max="20" placeholder="0" /></div>
+            <div class="form-group"><label>Wing R (Made /20)</label><input type="number" id="s-w-right" min="0" max="20" placeholder="0" /></div>
+            <div class="form-group"><label>Corner R (Made /20)</label><input type="number" id="s-c-right" min="0" max="20" placeholder="0" /></div>
+            <div class="form-group"><label>Mid L (Made /25)</label><input type="number" id="s-mid-left" min="0" max="25" placeholder="0" /></div>
+            <div class="form-group"><label>Mid R (Made /25)</label><input type="number" id="s-mid-right" min="0" max="25" placeholder="0" /></div>
+            <div class="form-group"><label>Free Throws (Made /50)</label><input type="number" id="s-ft" min="0" max="50" placeholder="0" /></div>
           </div>
-          <button type="submit" class="submit-btn">Save Workout & Sync to Drive</button>
+          <button type="submit" class="submit-btn">Save Session & Calculate Score</button>
         </form>
       </div>
     </div>
@@ -162,36 +125,39 @@
   <script>
     const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyohR3lHHzpfkSIKLiKb7WFGHT0HiTHHcXkyyK-vwPOXnYygjVuqI4Zqnl4rWIc_yTfWQ/exec";
 
-    let workouts = [];
+    let state = {
+      sessions: []
+    };
 
-    // Theme Management
-    function initTheme() {
-      const savedTheme = localStorage.getItem('shooting_lab_theme') || 'light';
-      document.documentElement.setAttribute('data-theme', savedTheme);
-      updateThemeButton(savedTheme);
+    function calculateSessionPoints(s) {
+      const cL = Number(s.cornerLeft) || 0;
+      const wL = Number(s.wingLeft) || 0;
+      const top = Number(s.top) || 0;
+      const wR = Number(s.wingRight) || 0;
+      const cR = Number(s.cornerRight) || 0;
+      const midL = Number(s.midLeft) || 0;
+      const midR = Number(s.midRight) || 0;
+      const ft = Number(s.ft) || 0;
+
+      const total3Made = cL + wL + top + wR + cR;
+      const totalMidMade = midL + midR;
+      
+      // 3 points for each 3PT make, 2 for each mid-range make, 1 for each free throw
+      return (total3Made * 3) + (totalMidMade * 2) + (ft * 1);
     }
 
-    function toggleTheme() {
-      const current = document.documentElement.getAttribute('data-theme');
-      const next = current === 'dark' ? 'light' : 'dark';
-      document.documentElement.setAttribute('data-theme', next);
-      localStorage.setItem('shooting_lab_theme', next);
-      updateThemeButton(next);
-    }
-
-    function updateThemeButton(theme) {
-      const btn = document.getElementById('theme-btn');
-      btn.textContent = theme === 'dark' ? '☀️ Light Mode' : '🌙 Dark Mode';
-    }
-
-    async function loadWorkouts() {
+    async function loadData() {
       setStatus("Syncing from Drive...");
       try {
         const res = await fetch(GOOGLE_SCRIPT_URL);
         const data = await res.json();
-        if (Array.isArray(data)) {
-          workouts = data;
-          localStorage.setItem('cayden_workouts', JSON.stringify(workouts));
+        if (data && Array.isArray(data.sessions)) {
+          state = data;
+          localStorage.setItem('cayden_shooting_cache', JSON.stringify(state));
+          setStatus("Synced with Drive");
+        } else if (Array.isArray(data)) {
+          state = { sessions: data };
+          localStorage.setItem('cayden_shooting_cache', JSON.stringify(state));
           setStatus("Synced with Drive");
         } else {
           fallbackLocal("Synced with Drive (Empty)");
@@ -203,26 +169,26 @@
     }
 
     function fallbackLocal(msg) {
-      const local = localStorage.getItem('cayden_workouts');
+      const local = localStorage.getItem('cayden_shooting_cache');
       if (local) {
-        try { workouts = JSON.parse(local); } catch(e){}
+        try { state = JSON.parse(local); } catch(e){}
       }
       setStatus(msg);
     }
 
-    async function saveWorkouts() {
-      localStorage.setItem('cayden_workouts', JSON.stringify(workouts));
+    async function saveData() {
+      localStorage.setItem('cayden_shooting_cache', JSON.stringify(state));
       setStatus("Saving to Drive...");
       try {
         await fetch(GOOGLE_SCRIPT_URL, {
           method: "POST",
           mode: "no-cors",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(workouts)
+          body: JSON.stringify(state)
         });
-        setStatus("All changes saved to Drive");
+        setStatus("Synced with Drive");
       } catch (err) {
-        setStatus("Error saving to Drive");
+        setStatus("Offline Mode");
       }
     }
 
@@ -230,140 +196,135 @@
       document.getElementById('sync-status').textContent = msg;
     }
 
-    function deleteWorkout(index) {
-      if (confirm("Delete this workout entry?")) {
-        workouts.splice(index, 1);
-        render();
-        saveWorkouts();
+    function clearAllCache() {
+      if (confirm("Clear local storage cache and reload?")) {
+        localStorage.removeItem('cayden_shooting_cache');
+        location.reload();
       }
     }
 
-    function clearAllWorkouts() {
-      if (confirm("Clear all workouts from local memory and reset?")) {
-        workouts = [];
-        localStorage.removeItem('cayden_workouts');
+    function deleteSession(idx) {
+      if (confirm("Delete this shoot-around session?")) {
+        state.sessions.splice(idx, 1);
         render();
-        saveWorkouts();
+        saveData();
       }
     }
 
     function render() {
-      const tbody = document.getElementById('session-body');
+      const tbody = document.getElementById('sessions-body');
       tbody.innerHTML = '';
 
-      if (workouts.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="11" class="empty-state">No shooting workouts recorded yet.</td></tr>`;
+      const sessions = state.sessions || [];
+      if (sessions.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="13" class="empty-state">No shoot-around sessions logged yet.</td></tr>`;
         document.getElementById('stats-summary').innerHTML = '';
         return;
       }
 
-      let totals = { s1: 0, s2: 0, s3: 0, s4: 0, s5: 0, total3: 0, ft: 0, mid1: 0, mid2: 0, totalMid: 0, count: workouts.length };
+      let totals = {
+        sessions: sessions.length,
+        threeMade: 0,
+        threeAtt: 0,
+        midMade: 0,
+        midAtt: 0,
+        ftMade: 0,
+        ftAtt: 0,
+        totalPoints: 0,
+        maxPoints: 0
+      };
 
-      workouts.forEach((w, idx) => {
-        const s1 = Number(w.s1) || 0;
-        const s2 = Number(w.s2) || 0;
-        const s3 = Number(w.s3) || 0;
-        const s4 = Number(w.s4) || 0;
-        const s5 = Number(w.s5) || 0;
-        const total3 = s1 + s2 + s3 + s4 + s5;
-        const ft = Number(w.ft) || 0;
-        
-        const mid1 = Number(w.mid1 !== undefined ? w.mid1 : (w.mid || 0));
-        const mid2 = Number(w.mid2 !== undefined ? w.mid2 : 0);
-        const totalMid = mid1 + mid2;
+      sessions.forEach((s, idx) => {
+        const cL = Number(s.cornerLeft) || 0;
+        const wL = Number(s.wingLeft) || 0;
+        const top = Number(s.top) || 0;
+        const wR = Number(s.wingRight) || 0;
+        const cR = Number(s.cornerRight) || 0;
+        const total3Made = cL + wL + top + wR + cR;
+        const total3Att = Number(s.total3Att) || 100; // default 20 per spot
 
-        totals.s1 += s1;
-        totals.s2 += s2;
-        totals.s3 += s3;
-        totals.s4 += s4;
-        totals.s5 += s5;
-        totals.total3 += total3;
-        totals.ft += ft;
-        totals.mid1 += mid1;
-        totals.mid2 += mid2;
-        totals.totalMid += totalMid;
+        const midL = Number(s.midLeft) || 0;
+        const midR = Number(s.midRight) || 0;
+        const totalMidMade = midL + midR;
+        const totalMidAtt = Number(s.totalMidAtt) || 50; // default 25 L / 25 R
+
+        const ft = Number(s.ft) || 0;
+        const ftAtt = Number(s.ftAtt) || 50;
+
+        const sessionPts = calculateSessionPoints(s);
+
+        totals.threeMade += total3Made;
+        totals.threeAtt += total3Att;
+        totals.midMade += totalMidMade;
+        totals.midAtt += totalMidAtt;
+        totals.ftMade += ft;
+        totals.ftAtt += ftAtt;
+        totals.totalPoints += sessionPts;
+        if (sessionPts > totals.maxPoints) totals.maxPoints = sessionPts;
+
+        const threePct = total3Att > 0 ? ((total3Made / total3Att) * 100).toFixed(1) + '%' : '-';
+        const midPct = totalMidAtt > 0 ? ((totalMidMade / totalMidAtt) * 100).toFixed(1) + '%' : '-';
+        const ftPct = ftAtt > 0 ? ((ft / ftAtt) * 100).toFixed(1) + '%' : '-';
 
         const tr = document.createElement('tr');
         tr.innerHTML = `
-          <td>${w.date || '-'}</td>
-          <td>${s1}/20 (${((s1/20)*100).toFixed(0)}%)</td>
-          <td>${s2}/20 (${((s2/20)*100).toFixed(0)}%)</td>
-          <td>${s3}/20 (${((s3/20)*100).toFixed(0)}%)</td>
-          <td>${s4}/20 (${((s4/20)*100).toFixed(0)}%)</td>
-          <td>${s5}/20 (${((s5/20)*100).toFixed(0)}%)</td>
-          <td class="highlight">${total3}/100 (${total3}%)</td>
-          <td class="green">${ft}/50 (${((ft/50)*100).toFixed(0)}%)</td>
-          <td>${mid1}/25 (${((mid1/25)*100).toFixed(0)}%)</td>
-          <td>${mid2}/25 (${((mid2/25)*100).toFixed(0)}%)</td>
-          <td style="font-weight:700;">${totalMid}/50 (${((totalMid/50)*100).toFixed(0)}%)</td>
-          <td><button class="btn-del" onclick="deleteWorkout(${idx})">✕ Delete</button></td>
+          <td>${s.date || '-'}</td>
+          <td>${cL}/20</td>
+          <td>${wL}/20</td>
+          <td>${top}/20</td>
+          <td>${wR}/20</td>
+          <td>${cR}/20</td>
+          <td class="highlight">${total3Made}/${total3Att} (${threePct})</td>
+          <td>${midL}/25</td>
+          <td>${midR}/25</td>
+          <td class="blue" style="color:var(--blue); font-weight:700;">${totalMidMade}/${totalMidAtt} (${midPct})</td>
+          <td class="green">${ft}/${ftAtt} (${ftPct})</td>
+          <td class="pts-highlight">${sessionPts} pts</td>
+          <td><button class="btn-del" onclick="deleteSession(${idx})">✕</button></td>
         `;
         tbody.appendChild(tr);
       });
 
-      const n = totals.count;
-      const avgTotal3Pct = ((totals.total3 / (n * 100)) * 100).toFixed(1) + '%';
-      const avgFtPct = ((totals.ft / (n * 50)) * 100).toFixed(1) + '%';
-      const avgMid1Pct = ((totals.mid1 / (n * 25)) * 100).toFixed(1) + '%';
-      const avgMid2Pct = ((totals.mid2 / (n * 25)) * 100).toFixed(1) + '%';
-      const avgTotalMidPct = ((totals.totalMid / (n * 50)) * 100).toFixed(1) + '%';
+      const n = totals.sessions;
+      const overall3Pct = totals.threeAtt > 0 ? ((totals.threeMade / totals.threeAtt) * 100).toFixed(1) + '%' : '0.0%';
+      const overallMidPct = totals.midAtt > 0 ? ((totals.midMade / totals.midAtt) * 100).toFixed(1) + '%' : '0.0%';
+      const overallFtPct = totals.ftAtt > 0 ? ((totals.ftMade / totals.ftAtt) * 100).toFixed(1) + '%' : '0.0%';
+      const avgPts = (totals.totalPoints / n).toFixed(1);
 
       document.getElementById('stats-summary').innerHTML = `
         <div class="stat-card"><div class="label">Sessions</div><div class="val">${n}</div></div>
-        <div class="stat-card"><div class="label">Overall 3PT%</div><div class="val" style="color:var(--accent)">${avgTotal3Pct}</div></div>
-        <div class="stat-card"><div class="label">Corner L%</div><div class="val">${((totals.s1/(n*20))*100).toFixed(1)}%</div></div>
-        <div class="stat-card"><div class="label">Wing L%</div><div class="val">${((totals.s2/(n*20))*100).toFixed(1)}%</div></div>
-        <div class="stat-card"><div class="label">Top 3PT%</div><div class="val">${((totals.s3/(n*20))*100).toFixed(1)}%</div></div>
-        <div class="stat-card"><div class="label">Wing R%</div><div class="val">${((totals.s4/(n*20))*100).toFixed(1)}%</div></div>
-        <div class="stat-card"><div class="label">Corner R%</div><div class="val">${((totals.s5/(n*20))*100).toFixed(1)}%</div></div>
-        <div class="stat-card"><div class="label">FT% (/50)</div><div class="val" style="color:var(--green)">${avgFtPct}</div></div>
-        <div class="stat-card"><div class="label">Mid L-1%</div><div class="val">${avgMid1Pct}</div></div>
-        <div class="stat-card"><div class="label">Mid R-2%</div><div class="val">${avgMid2Pct}</div></div>
-        <div class="stat-card"><div class="label">Total Mid%</div><div class="val">${avgTotalMidPct}</div></div>
+        <div class="stat-card"><div class="label">Avg Score</div><div class="val" style="color:#facc15;">${avgPts}</div></div>
+        <div class="stat-card"><div class="label">High Score</div><div class="val" style="color:#facc15;">${totals.maxPoints}</div></div>
+        <div class="stat-card"><div class="label">Overall 3PT%</div><div class="val" style="color:var(--accent);">${overall3Pct}</div></div>
+        <div class="stat-card"><div class="label">Overall Mid%</div><div class="val" style="color:var(--blue);">${overallMidPct}</div></div>
+        <div class="stat-card"><div class="label">Overall FT%</div><div class="val" style="color:var(--green);">${overallFtPct}</div></div>
       `;
     }
 
     function handleFormSubmit(e) {
       e.preventDefault();
-      const newWorkout = {
-        date: document.getElementById('w-date').value,
-        s1: Number(document.getElementById('w-s1').value) || 0,
-        s2: Number(document.getElementById('w-s2').value) || 0,
-        s3: Number(document.getElementById('w-s3').value) || 0,
-        s4: Number(document.getElementById('w-s4').value) || 0,
-        s5: Number(document.getElementById('w-s5').value) || 0,
-        ft: Number(document.getElementById('w-ft').value) || 0,
-        mid1: Number(document.getElementById('w-mid1').value) || 0,
-        mid2: Number(document.getElementById('w-mid2').value) || 0
+      const newSession = {
+        date: document.getElementById('s-date').value,
+        cornerLeft: Number(document.getElementById('s-c-left').value) || 0,
+        wingLeft: Number(document.getElementById('s-w-left').value) || 0,
+        top: Number(document.getElementById('s-top').value) || 0,
+        wingRight: Number(document.getElementById('s-w-right').value) || 0,
+        cornerRight: Number(document.getElementById('s-c-right').value) || 0,
+        total3Att: 100,
+        midLeft: Number(document.getElementById('s-mid-left').value) || 0,
+        midRight: Number(document.getElementById('s-mid-right').value) || 0,
+        totalMidAtt: 50,
+        ft: Number(document.getElementById('s-ft').value) || 0,
+        ftAtt: 50
       };
 
-      workouts.unshift(newWorkout);
+      state.sessions.unshift(newSession);
       render();
-      saveWorkouts();
+      saveData();
       e.target.reset();
     }
 
-    function importJsonWorkout() {
-      const raw = document.getElementById('import-json-box').value.trim();
-      if (!raw) return;
-      try {
-        const parsed = JSON.parse(raw);
-        if (Array.isArray(parsed)) {
-          workouts = parsed;
-        } else {
-          workouts.unshift(parsed);
-        }
-        render();
-        saveWorkouts();
-        document.getElementById('import-json-box').value = '';
-        alert("Workout list updated!");
-      } catch (err) {
-        alert("Invalid JSON format.");
-      }
-    }
-
-    initTheme();
-    loadWorkouts();
+    loadData();
   </script>
 </body>
 </html>
