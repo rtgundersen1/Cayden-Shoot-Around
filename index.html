@@ -21,25 +21,26 @@
     }
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
     body { background: var(--bg); color: var(--text); padding: 16px; }
-    .container { max-width: 1400px; margin: 0 auto; }
+    .container { max-width: 1550px; margin: 0 auto; }
     header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 10px; }
     h1 { font-size: 1.5rem; font-weight: 800; letter-spacing: -0.5px; }
     .status-badge { font-size: 0.75rem; padding: 4px 10px; border-radius: 6px; background: var(--card); border: 1px solid var(--border); color: var(--muted); }
 
-    .stats-summary { display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: 8px; margin-bottom: 18px; }
+    .stats-summary { display: grid; grid-template-columns: repeat(auto-fit, minmax(105px, 1fr)); gap: 8px; margin-bottom: 18px; }
     .stat-card { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 10px 6px; text-align: center; }
-    .stat-card .val { font-size: 1.25rem; font-weight: 700; color: #fff; margin-top: 2px; }
+    .stat-card .val { font-size: 1.15rem; font-weight: 700; color: #fff; margin-top: 2px; }
     .stat-card .label { font-size: 0.65rem; color: var(--muted); text-transform: uppercase; font-weight: 600; letter-spacing: 0.05em; }
 
     .table-box { background: var(--card); border: 1px solid var(--border); border-radius: 8px; overflow-x: auto; margin-bottom: 24px; }
-    table { width: 100%; border-collapse: collapse; text-align: center; font-size: 0.78rem; white-space: nowrap; }
+    table { width: 100%; border-collapse: collapse; text-align: center; font-size: 0.76rem; white-space: nowrap; }
     th { background: var(--header-bg); color: var(--muted); padding: 10px 8px; font-weight: 600; border-bottom: 1px solid var(--border); }
-    td { padding: 8px; border-bottom: 1px solid var(--border); }
+    td { padding: 8px 6px; border-bottom: 1px solid var(--border); }
     tr:hover { background: var(--card-hover); }
-    .pts-highlight { color: var(--gold); font-weight: 800; font-size: 0.9rem; }
+    .pts-highlight { color: var(--gold); font-weight: 800; font-size: 0.88rem; }
     .highlight { color: var(--accent); font-weight: 700; }
     .green { color: var(--green); font-weight: 700; }
     .blue { color: var(--blue); font-weight: 700; }
+    .pct-sub { color: var(--muted); font-size: 0.7rem; font-weight: 600; }
     .btn-del { background: transparent; border: 1px solid var(--red); color: var(--red); border-radius: 4px; padding: 2px 6px; font-size: 0.7rem; cursor: pointer; }
     .btn-del:hover { background: var(--red); color: #fff; }
     .empty-state { padding: 30px; color: var(--muted); text-align: center; }
@@ -70,7 +71,7 @@
     <header>
       <div>
         <h1>Cayden's Shooting Lab</h1>
-        <p style="color: var(--muted); font-size: 0.8rem; margin-top: 2px;">Spot Shooting, Free Throws & Shoot-Around Scoring Game</p>
+        <p style="color: var(--muted); font-size: 0.8rem; margin-top: 2px;">Spot-by-Spot Shooting Percentages & Shoot-Around Scoring</p>
       </div>
       <div style="display: flex; gap: 8px; align-items: center;">
         <span class="status-badge" id="sync-status">Connecting...</span>
@@ -143,7 +144,6 @@
     };
 
     function getSessionMetrics(s) {
-      // Support both key formats seamlessly
       const s1 = Number(s.s1 !== undefined ? s.s1 : (s.cornerLeft !== undefined ? s.cornerLeft : 0)) || 0;
       const s2 = Number(s.s2 !== undefined ? s.s2 : (s.wingLeft !== undefined ? s.wingLeft : 0)) || 0;
       const s3 = Number(s.s3 !== undefined ? s.s3 : (s.top !== undefined ? s.top : 0)) || 0;
@@ -238,6 +238,8 @@
 
       let totals = {
         sessions: sessions.length,
+        s1: 0, s2: 0, s3: 0, s4: 0, s5: 0,
+        mid1: 0, mid2: 0,
         threeMade: 0,
         midMade: 0,
         ftMade: 0,
@@ -248,29 +250,45 @@
       sessions.forEach((s, idx) => {
         const m = getSessionMetrics(s);
 
+        totals.s1 += m.s1;
+        totals.s2 += m.s2;
+        totals.s3 += m.s3;
+        totals.s4 += m.s4;
+        totals.s5 += m.s5;
+        totals.mid1 += m.mid1;
+        totals.mid2 += m.mid2;
         totals.threeMade += m.total3Made;
         totals.midMade += m.totalMidMade;
         totals.ftMade += m.ft;
         totals.totalPoints += m.points;
         if (m.points > totals.maxPoints) totals.maxPoints = m.points;
 
+        const s1Pct = ((m.s1 / 20) * 100).toFixed(1) + '%';
+        const s2Pct = ((m.s2 / 20) * 100).toFixed(1) + '%';
+        const s3Pct = ((m.s3 / 20) * 100).toFixed(1) + '%';
+        const s4Pct = ((m.s4 / 20) * 100).toFixed(1) + '%';
+        const s5Pct = ((m.s5 / 20) * 100).toFixed(1) + '%';
         const threePct = ((m.total3Made / 100) * 100).toFixed(1) + '%';
+
+        const mid1Pct = ((m.mid1 / 25) * 100).toFixed(1) + '%';
+        const mid2Pct = ((m.mid2 / 25) * 100).toFixed(1) + '%';
         const midPct = ((m.totalMidMade / 50) * 100).toFixed(1) + '%';
+
         const ftPct = ((m.ft / 50) * 100).toFixed(1) + '%';
 
         const tr = document.createElement('tr');
         tr.innerHTML = `
           <td>${s.date || '-'}</td>
-          <td>${m.s1}/20</td>
-          <td>${m.s2}/20</td>
-          <td>${m.s3}/20</td>
-          <td>${m.s4}/20</td>
-          <td>${m.s5}/20</td>
-          <td class="highlight">${m.total3Made}/100 (${threePct})</td>
-          <td>${m.mid1}/25</td>
-          <td>${m.mid2}/25</td>
-          <td class="blue">${m.totalMidMade}/50 (${midPct})</td>
-          <td class="green">${m.ft}/50 (${ftPct})</td>
+          <td>${m.s1}/20 <span class="pct-sub">(${s1Pct})</span></td>
+          <td>${m.s2}/20 <span class="pct-sub">(${s2Pct})</span></td>
+          <td>${m.s3}/20 <span class="pct-sub">(${s3Pct})</span></td>
+          <td>${m.s4}/20 <span class="pct-sub">(${s4Pct})</span></td>
+          <td>${m.s5}/20 <span class="pct-sub">(${s5Pct})</span></td>
+          <td class="highlight">${m.total3Made}/100 <span class="pct-sub">(${threePct})</span></td>
+          <td>${m.mid1}/25 <span class="pct-sub">(${mid1Pct})</span></td>
+          <td>${m.mid2}/25 <span class="pct-sub">(${mid2Pct})</span></td>
+          <td class="blue">${m.totalMidMade}/50 <span class="pct-sub">(${midPct})</span></td>
+          <td class="green">${m.ft}/50 <span class="pct-sub">(${ftPct})</span></td>
           <td class="pts-highlight">${m.points} pts</td>
           <td><button class="btn-del" onclick="deleteSession(${idx})">✕</button></td>
         `;
@@ -287,9 +305,9 @@
         <div class="stat-card"><div class="label">Sessions</div><div class="val">${n}</div></div>
         <div class="stat-card"><div class="label">Avg Score</div><div class="val" style="color:var(--gold);">${avgPts}</div></div>
         <div class="stat-card"><div class="label">High Score</div><div class="val" style="color:var(--gold);">${totals.maxPoints}</div></div>
-        <div class="stat-card"><div class="label">Overall 3PT%</div><div class="val" style="color:var(--accent);">${overall3Pct}</div></div>
-        <div class="stat-card"><div class="label">Overall Mid%</div><div class="val" style="color:var(--blue);">${overallMidPct}</div></div>
-        <div class="stat-card"><div class="label">Overall FT%</div><div class="val" style="color:var(--green);">${overallFtPct}</div></div>
+        <div class="stat-card"><div class="label">Total 3PT%</div><div class="val" style="color:var(--accent);">${overall3Pct}</div></div>
+        <div class="stat-card"><div class="label">Total Mid%</div><div class="val" style="color:var(--blue);">${overallMidPct}</div></div>
+        <div class="stat-card"><div class="label">Total FT%</div><div class="val" style="color:var(--green);">${overallFtPct}</div></div>
       `;
     }
 
