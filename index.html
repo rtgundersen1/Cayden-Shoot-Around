@@ -13,6 +13,7 @@
       --green: #22c55e;
       --red: #ef4444;
       --blue: #38bdf8;
+      --gold: #facc15;
       --text: #f8fafc;
       --muted: #94a3b8;
       --border: #1e293b;
@@ -35,9 +36,10 @@
     th { background: var(--header-bg); color: var(--muted); padding: 10px 8px; font-weight: 600; border-bottom: 1px solid var(--border); }
     td { padding: 8px; border-bottom: 1px solid var(--border); }
     tr:hover { background: var(--card-hover); }
-    .pts-highlight { color: #facc15; font-weight: 800; font-size: 0.9rem; }
+    .pts-highlight { color: var(--gold); font-weight: 800; font-size: 0.9rem; }
     .highlight { color: var(--accent); font-weight: 700; }
     .green { color: var(--green); font-weight: 700; }
+    .blue { color: var(--blue); font-weight: 700; }
     .btn-del { background: transparent; border: 1px solid var(--red); color: var(--red); border-radius: 4px; padding: 2px 6px; font-size: 0.7rem; cursor: pointer; }
     .btn-del:hover { background: var(--red); color: #fff; }
     .empty-state { padding: 30px; color: var(--muted); text-align: center; }
@@ -58,6 +60,9 @@
       background: #0f172a; border: 1px solid var(--border); color: var(--muted); padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 0.75rem; font-weight: 600;
     }
     .tool-btn.danger:hover { color: var(--red); border-color: var(--red); }
+    textarea.json-input {
+      width: 100%; height: 80px; background: #0f172a; border: 1px solid var(--border); color: #38bdf8; font-family: monospace; font-size: 0.78rem; padding: 8px; border-radius: 6px; outline: none;
+    }
   </style>
 </head>
 <body>
@@ -82,17 +87,17 @@
         <thead>
           <tr>
             <th>Date</th>
-            <th>Corner L (3PT)</th>
-            <th>Wing L (3PT)</th>
-            <th>Top (3PT)</th>
-            <th>Wing R (3PT)</th>
-            <th>Corner R (3PT)</th>
+            <th>Corner L (S1)</th>
+            <th>Wing L (S2)</th>
+            <th>Top (S3)</th>
+            <th>Wing R (S4)</th>
+            <th>Corner R (S5)</th>
             <th>Total 3PT</th>
-            <th>Mid L (2PT)</th>
-            <th>Mid R (2PT)</th>
+            <th>Mid L</th>
+            <th>Mid R</th>
             <th>Total Mid</th>
             <th>FT (/50)</th>
-            <th style="color:#facc15;">Total Points</th>
+            <th style="color:var(--gold);">Total Points</th>
             <th>Action</th>
           </tr>
         </thead>
@@ -100,21 +105,29 @@
       </table>
     </div>
 
-    <!-- Log Session Panel -->
     <div class="panels-grid">
+      <!-- Quick JSON Import Panel -->
+      <div class="panel-box">
+        <div class="panel-title">📥 Quick Import Workout JSON</div>
+        <p style="color: var(--muted); font-size: 0.75rem; margin-bottom: 8px;">Pasting an array [ { ... } ] replaces all sessions. Pasting a single { ... } adds one session:</p>
+        <textarea id="import-json-box" class="json-input" placeholder='Paste shooting JSON snippet here...'></textarea>
+        <button class="submit-btn" onclick="importJsonWorkout()">Import Workout</button>
+      </div>
+
+      <!-- Log Session Panel -->
       <div class="panel-box">
         <div class="panel-title">Log New Shoot Around Session</div>
         <form id="session-form" onsubmit="handleFormSubmit(event)">
           <div class="form-grid">
             <div class="form-group"><label>Date</label><input type="date" id="s-date" required /></div>
-            <div class="form-group"><label>Corner L (Made /20)</label><input type="number" id="s-c-left" min="0" max="20" placeholder="0" /></div>
-            <div class="form-group"><label>Wing L (Made /20)</label><input type="number" id="s-w-left" min="0" max="20" placeholder="0" /></div>
-            <div class="form-group"><label>Top (Made /20)</label><input type="number" id="s-top" min="0" max="20" placeholder="0" /></div>
-            <div class="form-group"><label>Wing R (Made /20)</label><input type="number" id="s-w-right" min="0" max="20" placeholder="0" /></div>
-            <div class="form-group"><label>Corner R (Made /20)</label><input type="number" id="s-c-right" min="0" max="20" placeholder="0" /></div>
-            <div class="form-group"><label>Mid L (Made /25)</label><input type="number" id="s-mid-left" min="0" max="25" placeholder="0" /></div>
-            <div class="form-group"><label>Mid R (Made /25)</label><input type="number" id="s-mid-right" min="0" max="25" placeholder="0" /></div>
-            <div class="form-group"><label>Free Throws (Made /50)</label><input type="number" id="s-ft" min="0" max="50" placeholder="0" /></div>
+            <div class="form-group"><label>Corner L (S1 /20)</label><input type="number" id="s-s1" min="0" max="20" placeholder="0" /></div>
+            <div class="form-group"><label>Wing L (S2 /20)</label><input type="number" id="s-s2" min="0" max="20" placeholder="0" /></div>
+            <div class="form-group"><label>Top (S3 /20)</label><input type="number" id="s-s3" min="0" max="20" placeholder="0" /></div>
+            <div class="form-group"><label>Wing R (S4 /20)</label><input type="number" id="s-s4" min="0" max="20" placeholder="0" /></div>
+            <div class="form-group"><label>Corner R (S5 /20)</label><input type="number" id="s-s5" min="0" max="20" placeholder="0" /></div>
+            <div class="form-group"><label>Mid L (/25)</label><input type="number" id="s-mid1" min="0" max="25" placeholder="0" /></div>
+            <div class="form-group"><label>Mid R (/25)</label><input type="number" id="s-mid2" min="0" max="25" placeholder="0" /></div>
+            <div class="form-group"><label>Free Throws (/50)</label><input type="number" id="s-ft" min="0" max="50" placeholder="0" /></div>
           </div>
           <button type="submit" class="submit-btn">Save Session & Calculate Score</button>
         </form>
@@ -129,21 +142,22 @@
       sessions: []
     };
 
-    function calculateSessionPoints(s) {
-      const cL = Number(s.cornerLeft) || 0;
-      const wL = Number(s.wingLeft) || 0;
-      const top = Number(s.top) || 0;
-      const wR = Number(s.wingRight) || 0;
-      const cR = Number(s.cornerRight) || 0;
-      const midL = Number(s.midLeft) || 0;
-      const midR = Number(s.midRight) || 0;
+    function getSessionMetrics(s) {
+      // Support both key formats seamlessly
+      const s1 = Number(s.s1 !== undefined ? s.s1 : (s.cornerLeft !== undefined ? s.cornerLeft : 0)) || 0;
+      const s2 = Number(s.s2 !== undefined ? s.s2 : (s.wingLeft !== undefined ? s.wingLeft : 0)) || 0;
+      const s3 = Number(s.s3 !== undefined ? s.s3 : (s.top !== undefined ? s.top : 0)) || 0;
+      const s4 = Number(s.s4 !== undefined ? s.s4 : (s.wingRight !== undefined ? s.wingRight : 0)) || 0;
+      const s5 = Number(s.s5 !== undefined ? s.s5 : (s.cornerRight !== undefined ? s.cornerRight : 0)) || 0;
+      const mid1 = Number(s.mid1 !== undefined ? s.mid1 : (s.midLeft !== undefined ? s.midLeft : 0)) || 0;
+      const mid2 = Number(s.mid2 !== undefined ? s.mid2 : (s.midRight !== undefined ? s.midRight : 0)) || 0;
       const ft = Number(s.ft) || 0;
 
-      const total3Made = cL + wL + top + wR + cR;
-      const totalMidMade = midL + midR;
-      
-      // 3 points for each 3PT make, 2 for each mid-range make, 1 for each free throw
-      return (total3Made * 3) + (totalMidMade * 2) + (ft * 1);
+      const total3Made = s1 + s2 + s3 + s4 + s5;
+      const totalMidMade = mid1 + mid2;
+      const points = (total3Made * 3) + (totalMidMade * 2) + (ft * 1);
+
+      return { s1, s2, s3, s4, s5, mid1, mid2, ft, total3Made, totalMidMade, points };
     }
 
     async function loadData() {
@@ -197,7 +211,7 @@
     }
 
     function clearAllCache() {
-      if (confirm("Clear local storage cache and reload?")) {
+      if (confirm("Clear local cache and reload?")) {
         localStorage.removeItem('cayden_shooting_cache');
         location.reload();
       }
@@ -225,76 +239,54 @@
       let totals = {
         sessions: sessions.length,
         threeMade: 0,
-        threeAtt: 0,
         midMade: 0,
-        midAtt: 0,
         ftMade: 0,
-        ftAtt: 0,
         totalPoints: 0,
         maxPoints: 0
       };
 
       sessions.forEach((s, idx) => {
-        const cL = Number(s.cornerLeft) || 0;
-        const wL = Number(s.wingLeft) || 0;
-        const top = Number(s.top) || 0;
-        const wR = Number(s.wingRight) || 0;
-        const cR = Number(s.cornerRight) || 0;
-        const total3Made = cL + wL + top + wR + cR;
-        const total3Att = Number(s.total3Att) || 100; // default 20 per spot
+        const m = getSessionMetrics(s);
 
-        const midL = Number(s.midLeft) || 0;
-        const midR = Number(s.midRight) || 0;
-        const totalMidMade = midL + midR;
-        const totalMidAtt = Number(s.totalMidAtt) || 50; // default 25 L / 25 R
+        totals.threeMade += m.total3Made;
+        totals.midMade += m.totalMidMade;
+        totals.ftMade += m.ft;
+        totals.totalPoints += m.points;
+        if (m.points > totals.maxPoints) totals.maxPoints = m.points;
 
-        const ft = Number(s.ft) || 0;
-        const ftAtt = Number(s.ftAtt) || 50;
-
-        const sessionPts = calculateSessionPoints(s);
-
-        totals.threeMade += total3Made;
-        totals.threeAtt += total3Att;
-        totals.midMade += totalMidMade;
-        totals.midAtt += totalMidAtt;
-        totals.ftMade += ft;
-        totals.ftAtt += ftAtt;
-        totals.totalPoints += sessionPts;
-        if (sessionPts > totals.maxPoints) totals.maxPoints = sessionPts;
-
-        const threePct = total3Att > 0 ? ((total3Made / total3Att) * 100).toFixed(1) + '%' : '-';
-        const midPct = totalMidAtt > 0 ? ((totalMidMade / totalMidAtt) * 100).toFixed(1) + '%' : '-';
-        const ftPct = ftAtt > 0 ? ((ft / ftAtt) * 100).toFixed(1) + '%' : '-';
+        const threePct = ((m.total3Made / 100) * 100).toFixed(1) + '%';
+        const midPct = ((m.totalMidMade / 50) * 100).toFixed(1) + '%';
+        const ftPct = ((m.ft / 50) * 100).toFixed(1) + '%';
 
         const tr = document.createElement('tr');
         tr.innerHTML = `
           <td>${s.date || '-'}</td>
-          <td>${cL}/20</td>
-          <td>${wL}/20</td>
-          <td>${top}/20</td>
-          <td>${wR}/20</td>
-          <td>${cR}/20</td>
-          <td class="highlight">${total3Made}/${total3Att} (${threePct})</td>
-          <td>${midL}/25</td>
-          <td>${midR}/25</td>
-          <td class="blue" style="color:var(--blue); font-weight:700;">${totalMidMade}/${totalMidAtt} (${midPct})</td>
-          <td class="green">${ft}/${ftAtt} (${ftPct})</td>
-          <td class="pts-highlight">${sessionPts} pts</td>
+          <td>${m.s1}/20</td>
+          <td>${m.s2}/20</td>
+          <td>${m.s3}/20</td>
+          <td>${m.s4}/20</td>
+          <td>${m.s5}/20</td>
+          <td class="highlight">${m.total3Made}/100 (${threePct})</td>
+          <td>${m.mid1}/25</td>
+          <td>${m.mid2}/25</td>
+          <td class="blue">${m.totalMidMade}/50 (${midPct})</td>
+          <td class="green">${m.ft}/50 (${ftPct})</td>
+          <td class="pts-highlight">${m.points} pts</td>
           <td><button class="btn-del" onclick="deleteSession(${idx})">✕</button></td>
         `;
         tbody.appendChild(tr);
       });
 
       const n = totals.sessions;
-      const overall3Pct = totals.threeAtt > 0 ? ((totals.threeMade / totals.threeAtt) * 100).toFixed(1) + '%' : '0.0%';
-      const overallMidPct = totals.midAtt > 0 ? ((totals.midMade / totals.midAtt) * 100).toFixed(1) + '%' : '0.0%';
-      const overallFtPct = totals.ftAtt > 0 ? ((totals.ftMade / totals.ftAtt) * 100).toFixed(1) + '%' : '0.0%';
+      const overall3Pct = ((totals.threeMade / (n * 100)) * 100).toFixed(1) + '%';
+      const overallMidPct = ((totals.midMade / (n * 50)) * 100).toFixed(1) + '%';
+      const overallFtPct = ((totals.ftMade / (n * 50)) * 100).toFixed(1) + '%';
       const avgPts = (totals.totalPoints / n).toFixed(1);
 
       document.getElementById('stats-summary').innerHTML = `
         <div class="stat-card"><div class="label">Sessions</div><div class="val">${n}</div></div>
-        <div class="stat-card"><div class="label">Avg Score</div><div class="val" style="color:#facc15;">${avgPts}</div></div>
-        <div class="stat-card"><div class="label">High Score</div><div class="val" style="color:#facc15;">${totals.maxPoints}</div></div>
+        <div class="stat-card"><div class="label">Avg Score</div><div class="val" style="color:var(--gold);">${avgPts}</div></div>
+        <div class="stat-card"><div class="label">High Score</div><div class="val" style="color:var(--gold);">${totals.maxPoints}</div></div>
         <div class="stat-card"><div class="label">Overall 3PT%</div><div class="val" style="color:var(--accent);">${overall3Pct}</div></div>
         <div class="stat-card"><div class="label">Overall Mid%</div><div class="val" style="color:var(--blue);">${overallMidPct}</div></div>
         <div class="stat-card"><div class="label">Overall FT%</div><div class="val" style="color:var(--green);">${overallFtPct}</div></div>
@@ -305,23 +297,43 @@
       e.preventDefault();
       const newSession = {
         date: document.getElementById('s-date').value,
-        cornerLeft: Number(document.getElementById('s-c-left').value) || 0,
-        wingLeft: Number(document.getElementById('s-w-left').value) || 0,
-        top: Number(document.getElementById('s-top').value) || 0,
-        wingRight: Number(document.getElementById('s-w-right').value) || 0,
-        cornerRight: Number(document.getElementById('s-c-right').value) || 0,
-        total3Att: 100,
-        midLeft: Number(document.getElementById('s-mid-left').value) || 0,
-        midRight: Number(document.getElementById('s-mid-right').value) || 0,
-        totalMidAtt: 50,
-        ft: Number(document.getElementById('s-ft').value) || 0,
-        ftAtt: 50
+        s1: Number(document.getElementById('s-s1').value) || 0,
+        s2: Number(document.getElementById('s-s2').value) || 0,
+        s3: Number(document.getElementById('s-s3').value) || 0,
+        s4: Number(document.getElementById('s-s4').value) || 0,
+        s5: Number(document.getElementById('s-s5').value) || 0,
+        mid1: Number(document.getElementById('s-mid1').value) || 0,
+        mid2: Number(document.getElementById('s-mid2').value) || 0,
+        ft: Number(document.getElementById('s-ft').value) || 0
       };
 
+      if (!state.sessions) state.sessions = [];
       state.sessions.unshift(newSession);
       render();
       saveData();
       e.target.reset();
+    }
+
+    function importJsonWorkout() {
+      const raw = document.getElementById('import-json-box').value.trim();
+      if (!raw) return;
+      try {
+        const parsed = JSON.parse(raw);
+        if (Array.isArray(parsed)) {
+          state.sessions = parsed;
+        } else if (parsed.sessions && Array.isArray(parsed.sessions)) {
+          state.sessions = parsed.sessions;
+        } else {
+          if (!state.sessions) state.sessions = [];
+          state.sessions.unshift(parsed);
+        }
+        render();
+        saveData();
+        document.getElementById('import-json-box').value = '';
+        alert("Workout data imported and synced successfully!");
+      } catch (err) {
+        alert("Invalid JSON format.");
+      }
     }
 
     loadData();
